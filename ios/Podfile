@@ -1,16 +1,21 @@
 platform :ios, '13.0'
 
-# Khai báo đường dẫn đến đoạn script gốc của Flutter trên máy ảo
 flutter_application_path = '..'
-load File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb') if File.exists?(File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb'))
+
+# Sửa lỗi: Dùng File.exist? (không có chữ s) đúng chuẩn Ruby mới
+if File.exist?(File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb'))
+  load File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb')
+end
 
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # Thay vì gọi hàm tự động lỗi, ta load trực tiếp file cấu hình liên kết
-  pod 'Flutter', :path => File.join(flutter_application_path, '.ios', 'Flutter') if File.exists?(File.join(flutter_application_path, '.ios', 'Flutter'))
-  pod 'Flutter', :path => File.join(flutter_application_path, 'Flutter') if File.exists?(File.join(flutter_application_path, 'Flutter'))
+  if File.exist?(File.join(flutter_application_path, '.ios', 'Flutter'))
+    pod 'Flutter', :path => File.join(flutter_application_path, '.ios', 'Flutter')
+  elsif File.exist?(File.join(flutter_application_path, 'Flutter'))
+    pod 'Flutter', :path => File.join(flutter_application_path, 'Flutter')
+  end
 end
 
 post_install do |installer|
