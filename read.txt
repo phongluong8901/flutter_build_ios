@@ -1,0 +1,149 @@
+#--- run
+flutter clearn
+flutter pub get
+
+flutter run
+
+#--- anroid build
+--1. đảm bảo môi trường Android SDK và Flutter đã sẵn sàng và không bị lỗi.
+flutter doctor
+
+--2. setup icon (512 den 1024)
+https://www.flaticon.com/free-icon/google-apps-script_5968494?term=app&page=2&position=74&origin=tag&related_id=5968494
+/assets/images/app_icon.png
+Bước 1.1: Chuẩn bị file ảnh Icon gốc
+Hệ điều hành Android yêu cầu rất nhiều kích cỡ icon khác nhau để hiển thị đẹp trên mọi loại màn hình (máy cấu hình thấp, máy màn hình 2K, 4K...). Do đó, bạn cần chuẩn bị một file ảnh gốc đạt tiêu chuẩn sau:
+
+Định dạng: Bản vẽ hoặc ảnh dạng .png (không dùng .jpg hay .jpeg).
+
+Hình dáng: Ảnh hình vuông (tỷ lệ 1:1), kích thước khuyến nghị là 1024x1024 pixel hoặc tối thiểu là 512x512 pixel để khi thu nhỏ không bị vỡ nét.
+
+Đặt tên file: Đặt tên chữ thường, không dấu, không khoảng trắng: app_icon.png.
+
+Bước 1.2: Đưa file ảnh vào cấu trúc thư mục dự án
+Bạn không nên vứt file ảnh lung tung, cấu trúc doanh nghiệp yêu cầu quản lý tài nguyên (Assets) gọn gàng:
+
+Mở dự án proj_4 bằng Android Studio hoặc VS Code.
+
+Ngay tại thư mục gốc của dự án (cùng cấp với thư mục lib, android, ios), bạn nhấn chuột phải chọn New -> Directory (hoặc New Folder) để tạo một thư mục tên là assets.
+
+Nhấp chuột phải vào thư mục assets vừa tạo, tạo tiếp thư mục con tên là images.
+
+Copy file ảnh app_icon.png bạn đã chuẩn bị ở Bước 1.1 rồi paste (dán) vào bên trong thư mục images.
+
+Cấu trúc chuẩn lúc này sẽ là: proj_4/assets/images/app_icon.png
+
+Bước 1.3: Khai báo cấu hình tự động cắt Icon
+Chúng ta sẽ dùng công cụ flutter_launcher_icons để tự động hóa việc thu nhỏ và rải icon vào các thư mục hệ thống của Android (giúp bạn tiết kiệm vài tiếng ngồi cắt ảnh thủ công).
+
+Mở file pubspec.yaml ở thư mục gốc lên.
+
+Tìm đến khối dev_dependencies: và thêm thư viện vào như sau (chú ý căn lề thụt dòng cho thẳng hàng):
+
+YAML
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # Thêm dòng dưới đây vào
+  flutter_launcher_icons: ^0.13.1
+Cuộn xuống cuối file pubspec.yaml, viết sát lề trái (không thụt dòng) cấu hình chỉ đường dẫn cho công cụ tìm file ảnh:
+YAML
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    background_color: "#ffffff"
+    theme_color: "#ffffff"
+  image_path: "assets/images/app_icon.png"
+
+  Bước 1.4: Chạy lệnh cập nhật Icon đồng loạt
+  Bây giờ, bạn mở Terminal trong Android Studio lên và chạy lại 2 lệnh sau để hệ thống ghi đè và sinh mới toàn bộ icon cho cả Android, iOS và Web:
+
+  Lệnh 1: Cập nhật thư viện
+
+  Bash
+  flutter pub get
+  Lệnh 2: Thực thi cắt và rải icon vào cả 3 nền tảng
+
+  Bash
+  dart run flutter_launcher_icons
+
+--3. Ten app
+2.1. Cấu hình tên App cho Android
+Trong cấu trúc thư mục của Android Studio, bạn mở file theo đường dẫn sau:
+android/app/src/main/AndroidManifest.xml
+
+Tìm đến thẻ <application> (thường nằm ở khoảng dòng thứ 7 đến dòng thứ 10).
+
+Sửa lại thuộc tính android:label bằng tên ứng dụng của bạn (có thể viết tiếng Việt có dấu, có khoảng trắng thoải mái):
+
+XML
+<application
+    android:label="Tên Ứng Dụng Của Bạn"
+    android:name="${applicationName}"
+    android:icon="@mipmap/ic_launcher">
+2.2. Cấu hình tên App cho iOS
+Đối với iOS, tên hiển thị trên màn hình iPhone được quy định trong file cấu hình Info.plist.
+
+Bạn mở file theo đường dẫn sau:
+ios/Runner/Info.plist
+
+Tìm đến cặp thẻ <key>CFBundleDisplayName</key> hoặc <key>CFBundleName</key>.
+
+Sửa chuỗi <string>...</string> ngay phía dưới nó thành tên app của bạn:
+
+XML
+<key>CFBundleDisplayName</key>
+<string>Tên Ứng Dụng Của Bạn</string>
+<key>CFBundleName</key>
+<string>Tên Ứng Dụng Của Bạn</string>
+2.3. Cấu hình tên App cho Web
+Đối với nền tảng Web, bạn cần cấu hình ở 2 nơi: Tiêu đề trên thanh trình duyệt (Title) và tên ứng dụng khi người dùng cài đặt phiên bản Web về màn hình điện thoại/máy tính (PWA).
+
+Nơi 1: Tiêu đề trang Web
+
+Mở file theo đường dẫn: web/index.html
+
+Tìm đến thẻ <title>...</title> bên trong thẻ <head>.
+
+Sửa lại thành tên ứng dụng của bạn:
+
+HTML
+<title>Tên Ứng Dụng Của Bạn</title>
+Nơi 2: Cấu hình Manifest cho Web
+
+Mở file theo đường dẫn: web/manifest.json
+
+Sửa lại 2 giá trị name và short_name ở ngay đầu file:
+
+JSON
+{
+    "name": "Tên Ứng Dụng Của Bạn",
+    "short_name": "Tên Viết Tắt",
+    "start_url": ".",
+    ...
+}
+(Lưu ý: short_name là tên ngắn gọn hiển thị dưới icon khi người dùng lưu trang web ra màn hình home của điện thoại).
+
+Bước kiểm tra:
+Bạn hãy lưu lại toàn bộ các file vừa sửa. Để hệ thống cập nhật hoàn toàn cấu hình mới, bạn mở Terminal lên và chạy lệnh dọn dẹp bộ nhớ đệm quen thuộc:
+
+Bash
+flutter clean
+flutter pub get
+
+--4. build
+flutter clean
+flutter pub get
+flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+
+--5 ban len driver file .apk
+
+--6. MeQR (me-qr.com) tao QR de tai ve may
+
+-- vao chplay tat protect -> cai app
+
+#--- ios build
+
