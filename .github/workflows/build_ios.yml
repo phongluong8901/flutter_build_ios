@@ -19,10 +19,11 @@ jobs:
 
       - name: Install Pod Dependencies
         run: |
+          flutter clean
           flutter pub get
           cd ios
           pod repo update
-          pod install # Lệnh này giờ sẽ chạy mượt vì đã có sẵn file Podfile bạn vừa tạo
+          pod install
 
       - name: Build iOS Application (No Sign)
         run: |

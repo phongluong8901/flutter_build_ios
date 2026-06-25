@@ -1,19 +1,21 @@
-# Khai báo nền tảng iOS mục tiêu
 platform :ios, '13.0'
 
-# Chỉ định đường dẫn plugin của Flutter
+# Khai báo đường dẫn đến đoạn script gốc của Flutter trên máy ảo
+flutter_application_path = '..'
+load File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb') if File.exists?(File.join(flutter_application_path, '.symlinks', 'plugins', 'flutter_plugin_loader', 'ios', 'PluginLoader.rb'))
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  flutter_install_all_ios_pods File.dirname(File.expand_path(__FILE__))
+  # Thay vì gọi hàm tự động lỗi, ta load trực tiếp file cấu hình liên kết
+  pod 'Flutter', :path => File.join(flutter_application_path, '.ios', 'Flutter') if File.exists?(File.join(flutter_application_path, '.ios', 'Flutter'))
+  pod 'Flutter', :path => File.join(flutter_application_path, 'Flutter') if File.exists?(File.join(flutter_application_path, 'Flutter'))
 end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-      # Tối ưu hóa cấu hình build cho máy ảo
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
   end
