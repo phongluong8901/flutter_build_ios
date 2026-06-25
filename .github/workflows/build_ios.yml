@@ -10,16 +10,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # Nâng cấp lên v4 để đồng bộ hệ thống mới
+        uses: actions/checkout@v4
 
       - name: Set up Flutter SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      - name: Install Dependencies
+      - name: Pre-build iOS to Generate Podfile
         run: |
           flutter pub get
+          # Bước cốt lõi: Ép Flutter tự sinh cấu trúc thư mục ios native và tạo file Podfile chuẩn
+          flutter build ios --config-only
+
+      - name: Install Pod Dependencies
+        run: |
           cd ios
           pod repo update
           pod install
@@ -35,7 +40,7 @@ jobs:
           zip -r ios-app-test.ipa Payload
 
       - name: Upload IPA Product to GitHub
-        uses: actions/upload-artifact@v4 # SỬA Ở ĐÂY: Nâng cấp từ v3 lên v4 để sửa lỗi bị fail
+        uses: actions/upload-artifact@v4
         with:
           name: iphone-app-test
           path: ios-app-test.ipa
