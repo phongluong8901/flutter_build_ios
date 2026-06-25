@@ -17,11 +17,11 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Pre-build iOS to Generate Podfile
+      - name: Pre-build iOS for Simulator (Generate Podfile Without Sign)
         run: |
           flutter pub get
-          # Bước cốt lõi: Ép Flutter tự sinh cấu trúc thư mục ios native và tạo file Podfile chuẩn
-          flutter build ios --config-only
+          # Mẹo doanh nghiệp: Build giả lập để ép sinh Podfile mà KHÔNG BỊ HỎI CHỨNG CHỈ APPLE
+          flutter build ios --simulator --config-only
 
       - name: Install Pod Dependencies
         run: |
@@ -31,6 +31,7 @@ jobs:
 
       - name: Build iOS Application (No Sign)
         run: |
+          # Biên dịch release hệ thống thô không chữ ký
           flutter build ios --release --no-codesign --obfuscate --split-debug-info=build/ios/outputs/symbols
 
       - name: Pack App into IPA Archive
